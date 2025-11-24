@@ -383,15 +383,42 @@ thead {
   color: white;
 }
 
+.scrollable-table {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.scrollable-table table {
+  position: relative;
+  min-width: 100%;
+}
+
+.scrollable-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 th {
   padding: 18px 20px;
   text-align: left;
   font-weight: 600;
   font-size: 14px;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+th:first-child {
+  min-width: 80px;
 }
 
 th:last-child {
   text-align: center;
+  min-width: 100px;
 }
 
 tbody tr {
@@ -413,15 +440,22 @@ tbody tr:nth-child(even):hover {
 
 td {
   padding: 16px 20px;
+  min-width: 120px;
+}
+
+td:first-child {
+  min-width: 80px;
 }
 
 td:last-child {
   text-align: center;
+  min-width: 100px;
 }
 
 input[type="text"],
 input[type="number"] {
   width: 100%;
+  min-width: 100px;
   padding: 10px 14px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
@@ -535,6 +569,43 @@ input[type="number"]:focus {
 
   .scrollable-table {
     max-height: 400px;
+    overflow-x: scroll;
+    overflow-y: auto;
+  }
+
+  .scrollable-table table {
+    min-width: 800px; /* Force horizontal scroll on mobile */
+  }
+
+  th {
+    padding: 14px 16px;
+    font-size: 13px;
+    min-width: 140px;
+  }
+
+  th:first-child {
+    min-width: 70px;
+  }
+
+  td {
+    padding: 12px 16px;
+    min-width: 140px;
+  }
+
+  td:first-child {
+    min-width: 70px;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    min-width: 120px;
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .remaining-badge {
+    font-size: 15px;
+    padding: 12px 16px;
   }
 
   table {

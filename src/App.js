@@ -370,7 +370,7 @@ function App() {
   return (
     <div className="app">
       <div className="container">
-        <div className="header-card">
+        {/* <div className="header-card">
           <div className="header-top">
             <div className="title-section">
               <h1>Medicine Inventory Manager</h1>
@@ -384,7 +384,7 @@ function App() {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {notification && (
           <div className={`notification ${notification.type}`}>
@@ -400,7 +400,7 @@ function App() {
         )}
 
         <div className="table-header">
-          <h2>Medicine Inventory</h2>
+          <h2>Medicine Inventory - New Jeevan Hospital</h2>
           <div className="table-header-buttons">
             <label htmlFor="excel-import" className="file-import-label">
               <span>📥</span> Import from Excel
