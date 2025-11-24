@@ -31,15 +31,8 @@ function App() {
   }
 
   useEffect(() => {
-    // Clear all data and start fresh
-    localStorage.clear();
-    setMedicines([]);
-    const today = getTodayDate();
-    setCurrentDate(today);
-    localStorage.setItem("lastCheckDate", today);
-    showNotification("System reset complete - Starting fresh!", "success");
-
-    // Start the auto day-end check
+    loadTodayData();
+    checkForDayChange();
     const interval = startAutoDayEndCheck();
     return () => clearInterval(interval);
   }, []);
@@ -91,8 +84,8 @@ function App() {
       const hours = now.getHours();
       const minutes = now.getMinutes();
 
-      // Changed to 12:55 AM (00:55)
-      if (hours === 0 && minutes === 55) {
+      // Changed to 12:01 AM (00:01)
+      if (hours === 0 && minutes === 1) {
         const lastAutoBackup = localStorage.getItem("lastAutoBackup");
         const today = getTodayDate();
 
@@ -233,6 +226,68 @@ function App() {
     exportToExcel(medicines, currentDate);
   }
 
+  function importFromExcel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+        // Convert Excel data to medicine format
+        const importedMedicines = jsonData.map((row, index) => ({
+          id: Date.now() + index,
+          name: row["Medicine Name"] || "",
+          totalQuantity: Number(row["Opening Stock"]) || 0,
+          addedQuantity: Number(row["Added Quantity"]) || 0,
+          usedQuantity: Number(row["Used Quantity"]) || 0,
+          lastUpdated: Date.now() + index,
+        }));
+
+        if (importedMedicines.length === 0) {
+          showNotification("No valid data found in Excel file!", "error");
+          return;
+        }
+
+        // Ask user if they want to replace or merge
+        const shouldReplace = window.confirm(
+          `Found ${importedMedicines.length} medicines in Excel file.\n\n` +
+            `Current inventory has ${medicines.length} medicines.\n\n` +
+            `Click OK to REPLACE current data\n` +
+            `Click Cancel to MERGE with current data`
+        );
+
+        let finalMedicines;
+        if (shouldReplace) {
+          finalMedicines = importedMedicines;
+        } else {
+          // Merge: keep existing + add new
+          finalMedicines = [...medicines, ...importedMedicines];
+        }
+
+        setMedicines(finalMedicines);
+        saveData(finalMedicines);
+        showNotification(
+          `Successfully imported ${importedMedicines.length} medicines!`,
+          "success"
+        );
+      } catch (error) {
+        console.error("Import error:", error);
+        showNotification(
+          "Failed to import Excel file. Please check the format.",
+          "error"
+        );
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+    event.target.value = ""; // Reset input
+  }
+
   function exportToExcel(data, date) {
     const excelData = data.map((med) => ({
       "Medicine Name": med.name,
@@ -347,6 +402,16 @@ function App() {
         <div className="table-header">
           <h2>Medicine Inventory</h2>
           <div className="table-header-buttons">
+            <label htmlFor="excel-import" className="file-import-label">
+              <span>📥</span> Import from Excel
+            </label>
+            <input
+              id="excel-import"
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={importFromExcel}
+              style={{ display: "none" }}
+            />
             <button className="btn-primary" onClick={addMedicine}>
               <span>➕</span> Add Medicine
             </button>
@@ -497,7 +562,7 @@ function App() {
 
           <div className="auto-backup-info">
             <strong>🤖 Auto Day-End:</strong> System checks every minute. At{" "}
-            <strong>12:55 AM</strong>, it will automatically:
+            <strong>12:01 AM</strong>, it will automatically:
             <br />• Export today's data to Excel
             <br />• Roll over remaining quantities to tomorrow's total
             <br />• Reset added and used quantities to 0
@@ -505,7 +570,7 @@ function App() {
           </div>
 
           <div className="search-box">
-            <span className="search-icon">🔍</span>
+            {/* <span className="search-icon"></span> */}
             <input
               type="text"
               placeholder="Search medicines..."

@@ -176,6 +176,29 @@ button {
   gap: 10px;
 }
 
+.file-import-label {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  background: #4a5568;
+  color: white;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin: 0;
+}
+
+.file-import-label:hover {
+  background: #2d3748;
+  transform: translateY(-2px);
+}
+
 .auto-backup-info {
   background: #e6fffa;
   border: 2px solid #81e6d9;
@@ -283,6 +306,29 @@ button {
 .table-header-buttons {
   display: flex;
   gap: 15px;
+}
+
+.table-header-buttons .file-import-label {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #667eea;
+  color: white;
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.table-header-buttons .file-import-label:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .scrollable-table {
